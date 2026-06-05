@@ -9,7 +9,8 @@ Proyecto de analitica de datos que cubre el flujo desde la exploracion del datas
 - Exploracion de datos (EDA)
 - Limpieza y transformacion (ETL)
 - Modelado en estrella en PostgreSQL
-- Dashboard en Power BI Desktop (pendiente)
+- Preparacion para dashboard en Power BI Desktop
+- Carga de datos desde notebooks a PostgreSQL con SQLAlchemy
 
 ## Objetivo del proyecto
 
@@ -49,7 +50,8 @@ Construir un pipeline de datos completo que permita responder preguntas clave de
 - python-dotenv
 - ipykernel
 - PostgreSQL
-- Power BI Desktop (pendiente)
+- DBeaver
+- Power BI
 - Jupyter Notebook
 - uv
 
@@ -58,6 +60,7 @@ Construir un pipeline de datos completo que permita responder preguntas clave de
 ```text
 analisis-ventas-colombia/
 |-- assets/
+|   |-- Dashboard.png
 |   `-- star_model.png
 |-- data/
 |   |-- raw/
@@ -80,13 +83,24 @@ analisis-ventas-colombia/
 ## Arquitectura del proyecto
 
 ```text
-[CSV raw] -> [notebook/EDA.ipynb] -> [notebook/ETL.ipynb] -> [PostgreSQL] -> [Power BI Desktop]
+[CSV raw] -> [notebook/EDA.ipynb] -> [notebook/ETL.ipynb] -> [PostgreSQL + DBeaver] -> [Power BI]
 ```
 
 - EDA: exploracion y deteccion de problemas.
 - ETL: limpieza, transformacion y carga.
 - PostgreSQL: modelo estrella para analisis.
-- Power BI Desktop: visualizacion e insights (pendiente).
+- DBeaver: administracion, consulta y validacion de la base de datos.
+- Power BI: visualizacion e insights.
+
+## Assets del proyecto
+
+### Modelo estrella
+
+![Modelo estrella](assets/star_model.png)
+
+### Dashboard
+
+![Dashboard Power BI](assets/Dashboard.png)
 
 ## Flujo de trabajo
 
@@ -97,7 +111,7 @@ analisis-ventas-colombia/
 5. Generacion del archivo limpio en `data/clean/Sample_Superstore_clean.csv`.
 6. Creacion de dimensiones y tabla de hechos en `notebook/ETL.ipynb`.
 7. Relacionamiento de tablas en PostgreSQL con `sql/relate_table.sql`.
-8. Construccion del dashboard en Power BI Desktop como etapa pendiente.
+8. Construccion del dashboard en Power BI.
 
 ## Modelo estrella
 
@@ -177,26 +191,66 @@ DB_NAME=ventas_db
 CREATE DATABASE ventas_db;
 ```
 
-6. Ejecutar los notebooks en orden.
+## Como correr el proyecto
+
+1. Activar el entorno virtual.
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+```
+
+2. Instalar o sincronizar las dependencias.
+
+```powershell
+uv sync
+```
+
+3. Configurar las variables de entorno en `.env`.
+
+```env
+DB_USER=tu_usuario
+DB_PASSWORD=tu_password
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=ventas_db
+```
+
+4. Crear la base de datos en PostgreSQL si todavia no existe.
+
+```sql
+CREATE DATABASE ventas_db;
+```
+
+5. Ejecutar los notebooks en orden.
 
 ```text
 notebook/EDA.ipynb
 notebook/ETL.ipynb
 ```
 
-7. Ejecutar el script de relacionamiento de tablas.
+6. Ejecutar el script principal para aplicar el relacionamiento de tablas en PostgreSQL.
 
 ```powershell
 python main.py
 ```
 
-8. Conectar Power BI Desktop a PostgreSQL cuando se construya el dashboard.
+7. Validar las tablas y relaciones en DBeaver.
+
+```text
+Motor: PostgreSQL
+Base de datos: ventas_db
+Tablas: dim_customer, dim_product, dim_ubication, dim_date, fact_sales
+```
+
+8. Abrir Power BI y conectar el reporte a PostgreSQL.
 
 ```text
 Origen: PostgreSQL
 Servidor: localhost
 Base de datos: ventas_db
 ```
+
+> Nota: este proyecto usa `PostgreSQL` como motor relacional, `DBeaver` para administrar y validar la base de datos, y `Power BI` como destino de visualizacion. El notebook `ETL.ipynb` construye las dimensiones y la tabla de hechos, y `main.py` carga esos datos a la base de datos.
 
 ## Analisis exploratorio
 
@@ -276,9 +330,11 @@ El proceso de ETL transforma el dataset original en un archivo limpio y en tabla
 | Salida | Exportacion a `data/clean/Sample_Superstore_clean.csv` | Dataset limpio guardado |
 | Base de datos | Relacionamiento con llaves primarias y foraneas | Modelo estrella conectado en PostgreSQL |
 
-## Dashboard Power BI Desktop
+## Dashboard Powe
 
-La carpeta `powerbi/` queda reservada para el archivo del reporte. Esta es la unica etapa pendiente del proyecto: construir el dashboard en Power BI Desktop a partir del modelo cargado en PostgreSQL.
+El dashboard fue construido en Power BI a partir del modelo estrella cargado en PostgreSQL y validado desde DBeaver.
+
+![Dashboard Power BI](assets/Dashboard.png)
 
 Visualizaciones recomendadas:
 
@@ -309,7 +365,7 @@ Visualizaciones recomendadas:
 
 ## Estado actual del proyecto
 
-El proceso de datos esta completado. Queda pendiente la construccion del dashboard en Power BI Desktop.
+El proyecto esta completado. El proceso de datos fue desarrollado en Python, el modelo estrella fue cargado en PostgreSQL y validado con DBeaver, y el dashboard final fue construido en Power BI.
 
 - EDA completado.
 - Dataset limpio generado.
@@ -317,14 +373,17 @@ El proceso de datos esta completado. Queda pendiente la construccion del dashboa
 - Modelo estrella construido.
 - Script SQL de relaciones creado.
 - Conexion y variables de entorno configuradas para PostgreSQL.
-- Pendiente: crear el reporte en Power BI Desktop y guardarlo en `powerbi/`.
+- Base de datos administrada y validada en DBeaver.
+- Dashboard construido en Power BI y documentado en el README.
 
 ## Autor
 
 Robinson Urrego
 
 - GitHub: https://github.com/r0bins0nurreg07
-- LinkedIn: https://www.linkedin.com/in/tu-perfil
+- LinkedIn:www.linkedin.com/in/robinson-urrego
+
+
 
 ## Licencia
 
